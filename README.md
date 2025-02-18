@@ -2,7 +2,12 @@
 
 Este projeto utiliza o microcontrolador Raspberry Pi Pico para criar um sistema interativo que combina a leitura de um joystick analógico, o controle de LEDs via PWM e a exibição de gráficos em um display OLED SSD1306. O código foi desenvolvido em C e faz uso das bibliotecas do SDK do Raspberry Pi Pico para manipulação de periféricos como GPIO, ADC, PWM, I2C e o display OLED.
 
-O objetivo principal é demonstrar como integrar diferentes componentes eletrônicos em um único projeto, permitindo a interação do usuário através de um joystick e botões, enquanto feedback visual é fornecido por LEDs e um display OLED.
+## Objetivos
+
+• Compreender o funcionamento do conversor analógico-digital (ADC) no RP2040.
+• Utilizar o PWM para controlar a intensidade de dois LEDs RGB com base nos valores do joystick.
+• Representar a posição do joystick no display SSD1306 por meio de um quadrado móvel.
+• Aplicar o protocolo de comunicação I2C na integração com o display.
 
 ## Componentes Principais
 
