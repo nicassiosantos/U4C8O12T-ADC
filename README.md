@@ -1,90 +1,155 @@
-# Controle de Servo Motor com Raspberry Pi Pico
+# Projeto de Controle de Joystick e Display OLED com Raspberry Pi Pico
 
-Este projeto utiliza o **Raspberry Pi Pico** para controlar um **servo motor** através de sinais **PWM (Pulse Width Modulation)**, permitindo o ajuste preciso da angulação em 0°, 90° e 180°. Após posicionar o servo nestes ângulos, o código ativa uma rotina de interrupção para variar continuamente o ângulo, criando um movimento suave.
+Este projeto utiliza o microcontrolador Raspberry Pi Pico para criar um sistema interativo que combina a leitura de um joystick analógico, o controle de LEDs via PWM e a exibição de gráficos em um display OLED SSD1306. O código foi desenvolvido em C e faz uso das bibliotecas do SDK do Raspberry Pi Pico para manipulação de periféricos como GPIO, ADC, PWM, I2C e o display OLED.
 
----
+O objetivo principal é demonstrar como integrar diferentes componentes eletrônicos em um único projeto, permitindo a interação do usuário através de um joystick e botões, enquanto feedback visual é fornecido por LEDs e um display OLED.
+
+## Componentes Principais
+
+### Joystick Analógico
+
+O joystick possui dois eixos (X e Y) que fornecem sinais analógicos. Esses sinais são lidos pelo Raspberry Pi Pico através de seus conversores analógico-digitais (ADC).
+
+Os valores lidos são usados para controlar:
+- O brilho dos LEDs azul e vermelho via PWM.
+- A posição de um quadrado no display OLED.
+
+### LEDs
+
+- **LED Azul (LED_B) e LED Vermelho (LED_R):** Controlados via PWM, o brilho desses LEDs varia conforme a posição do joystick.
+- **LED Verde (LED_G):** Controlado digitalmente, pode ser ligado ou desligado através de um botão.
+
+### Display OLED SSD1306
+
+Um display OLED de 128x64 pixels é utilizado para exibir um quadrado que se move conforme a posição do joystick.
+
+O display também pode ser limpo ou ter uma borda desenhada através de botões.
+
+### Botões
+
+- **Botão A:** Liga/desliga o PWM dos LEDs azul e vermelho.
+- **Botão do Joystick:** Liga/desliga o LED verde e controla a exibição de uma borda no display OLED.
 
 ## Funcionalidades do Projeto
 
-1. **Controle de Posições Fixas do Servo Motor:**
-   - Posiciona o servo motor em **0 graus**, **90 graus** e **180 graus**, permanecendo em cada ângulo por 5 segundos.
-2. **Rotina de Interrupção para Movimento Contínuo:**
-   - Após ajustar as posições fixas, uma **interrupção PWM** é ativada para variar continuamente o ângulo do servo, gerando um movimento fluido de vai e vem.
+1. **Leitura do Joystick**
+   O joystick fornece valores analógicos para os eixos X e Y, que são convertidos em valores digitais pelo ADC do Raspberry Pi Pico.
 
----
+   Esses valores são mapeados para controlar:
+   - O brilho dos LEDs azul e vermelho via PWM.
+   - A posição de um quadrado no display OLED.
 
-## video do Projeto
-- **[Ver Video](https://drive.google.com/file/d/1L20wqLJ6ExRvqR8A_QHNRRN3DfRTPWUk/view?usp=sharing)**
-  
-## Frequência e Cálculo do PWM
+2. **Controle de LEDs**
+   - **LEDs Azul e Vermelho:** O brilho é ajustado com base na posição do joystick. Quando o joystick está na posição central, os LEDs ficam apagados. Ao mover o joystick, o brilho aumenta proporcionalmente à distância da posição central.
+   - **LED Verde:** Pode ser ligado ou desligado através do botão do joystick. Quando ligado, uma borda é desenhada no display OLED.
 
-### Parâmetros Utilizados:
-- **Frequência do PWM**: 50 Hz  
-- **Divisor de Clock (PWM_DIVISER)**: 100
-- **Período de Wrap (WRAP_PERIOD)**: 25000
+3. **Display OLED**
+   Um quadrado de 8x8 pixels é desenhado no display OLED. A posição do quadrado é atualizada conforme a posição do joystick. O display pode ser limpo ou ter uma borda desenhada através do botão do joystick.
 
-### Cálculo da Frequência:
-A frequência do PWM é calculada pela fórmula:
-
-f_PWM = F_Clock / (PWM_DIVISER * WRAP_PERIOD)
-
-Substituindo com os valores utilizados:
-
-f_PWM = 125000000 / (100 * 25000) = 50 Hz 
-
-### Cálculo do Duty Cycle para o Servo:
-- 0 graus: Pulso de **0,5 ms** → 2,5% de Duty Cycle  
-- 90 graus: Pulso de **1,47 ms** → 7,35% de Duty Cycle  
-- 180 graus: Pulso de **2,4 ms** → 12% de Duty Cycle  
-
-| Ângulo | Tempo do Pulso | Duty Cycle | Nível PWM |
-|--------|----------------|------------|-----------|
-| 0°     | 0,5 ms         | 2,5%       | 625       |
-| 90°    | 1,47 ms        | 7,35%      | 1837.5    |
-| 180°   | 2,4 ms         | 12%        | 3000      |
-
----
-
-## Componentes Necessários
-
-- **Raspberry Pi Pico**
-- **Servo motor** (compatível com controle por PWM)
-- **Jumpers** para conexão
-- **Fonte de alimentação** (se necessário, dependendo do consumo do servo)
-
----
-
-## Esquema de Conexão
-
-- **GPIO 22 do Raspberry Pi Pico** → **Pino de Sinal do Servo Motor**
-- **VCC do Servo Motor** → **3.3V ou 5V** (conforme especificação do servo)
-- **GND do Servo Motor** → **GND do Raspberry Pi Pico**
-
----
+4. **Botões de Controle**
+   - **Botão A:** Liga/desliga o PWM dos LEDs azul e vermelho. Quando desligado, os LEDs são apagados e os pinos são reconfigurados como saídas digitais.
+   - **Botão do Joystick:** Liga/desliga o LED verde. Controla a exibição de uma borda no display OLED.
 
 ## Estrutura do Código
 
-O código está dividido nas seguintes funções:
+O projeto está organizado em dois arquivos principais:
 
-### 1. `pwm_setup()`
-- Configura o **GPIO 22** como saída PWM.
-- Define o **divisor de clock** e o **período de wrap** para o PWM.
-- Inicia o PWM com um nível inicial de 12% (correspondente a 180 graus).
+### 1. `adc.c`
 
-### 2. `graus_180()`, `graus_90()`, `graus_0()`
-- Ajustam o ciclo de trabalho do PWM para posicionar o servo em **180 graus**, **90 graus** e **0 graus**, respectivamente.
-- Cada função mantém o servo no ângulo definido por **5 segundos** antes de prosseguir para o próximo ângulo.
+Contém a lógica principal do projeto, incluindo:
+- Inicialização do hardware (GPIO, ADC, PWM, I2C, display OLED).
+- Leitura dos valores analógicos do joystick.
+- Controle do brilho dos LEDs via PWM.
+- Tratamento de interrupções geradas pelos botões.
+- Atualização da posição do quadrado no display OLED.
 
-### 3. `pwm_setup_irq()`
-- Configura a **interrupção de PWM** para o canal correspondente ao GPIO utilizado.
-- Define o **handler de interrupção** para variar continuamente o ângulo do servo após a execução das posições fixas.
+### 2. `ssd1306.c`
 
-### 4. `wrapHandler()`
-- **Função de Interrupção** chamada quando o PWM atinge o valor de wrap.
-- Varia o nível de PWM de forma crescente e decrescente, criando um movimento suave de vai e vem no ângulo do servo.
+Contém as funções para controle do display OLED SSD1306, incluindo:
+- Inicialização e configuração do display.
+- Envio de comandos e dados via I2C.
+- Funções para desenhar pixels, preencher a tela, desenhar retângulos e quadrados.
 
-# Autor:
-- **[Nicassio Santos.](https://github.com/nicassiosantos)**
+## Detalhamento do Código em `adc.c`
+
+O arquivo `adc.c` é o núcleo do projeto, onde toda a lógica de controle e interação é implementada. Abaixo está uma explicação detalhada de cada parte do código:
+
+### 1. Inclusão de Bibliotecas
+
+O código começa incluindo as bibliotecas necessárias para manipulação de GPIO, PWM, ADC, I2C e controle do display OLED.
+
+### 2. Definições dos Pinos
+
+As definições dos pinos são feitas para facilitar a configuração e manutenção do código. Isso inclui os pinos para os eixos do joystick, LEDs, botões e conexões I2C para o display OLED.
+
+### 3. Variáveis Globais e Flags
+
+Variáveis globais são usadas para armazenar estados e configurações que são compartilhadas entre diferentes funções.
+
+### 4. Inicialização do PWM
+
+Uma função é responsável por configurar os pinos como saídas PWM e definir o valor de "wrap" (valor máximo do contador PWM). Essa função é usada para inicializar os LEDs azul e vermelho.
+
+### 5. Tratamento de Interrupções
+
+Uma função de interrupção é usada para tratar os eventos gerados pelos botões, implementando um mecanismo de debounce para evitar leituras falsas e controlando o estado do PWM e do LED verde.
+
+### 6. Configuração Inicial
+
+Uma função de configuração inicial é responsável por configurar todos os periféricos necessários, incluindo GPIO, ADC, I2C e o display OLED.
+
+### 7. Atualização do Display OLED
+
+Uma função é responsável por atualizar a posição de um quadrado no display OLED com base nos valores do joystick.
+
+### 8. Leitura do Joystick e Controle do PWM
+
+Outra função é responsável por ler os valores do joystick, calcular os ciclos de trabalho do PWM e atualizar a posição do quadrado no display OLED.
+
+### 9. Função Principal
+
+A função principal do programa configura o hardware, inicializa as interrupções e entra em um loop infinito onde os valores do joystick são lidos e processados.
+
+
+### Pré-requisitos
+
+#### Hardware:
+- Raspberry Pi Pico.
+- Joystick analógico.
+- Display OLED SSD1306.
+- LEDs (azul, vermelho, verde).
+- Botões.
+- Resistores e jumpers para conexões.
+
+### Conexões do Hardware
+
+#### Joystick:
+- Eixo Y: Pino 26 (VRY)  
+- Eixo X: Pino 27 (VRX)  
+- Botão: Pino 22 (button_joystick)
+
+#### LEDs:
+- Azul: Pino 12 (LED_B)  
+- Vermelho: Pino 13 (LED_R)  
+- Verde: Pino 11 (LED_G)
+
+#### Botões:
+- Botão A: Pino 5 (button_A)  
+- Botão do Joystick: Pino 22 (button_joystick)
+
+#### Display OLED:
+- SDA: Pino 14 (I2C_SDA)  
+- SCL: Pino 15 (I2C_SCL)
+
+### Considerações Finais
+
+Este projeto é um exemplo prático de como integrar diferentes componentes eletrônicos com um microcontrolador. Ele pode ser expandido para incluir mais funcionalidades, como:
+- Leitura de mais sensores
+- Controle de mais dispositivos
+- Implementação de uma interface gráfica mais complexa no display OLED
+
+
+
 
 
 
