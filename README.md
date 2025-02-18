@@ -10,7 +10,7 @@ Este projeto utiliza o microcontrolador Raspberry Pi Pico para criar um sistema 
 - Aplicar o protocolo de comunicação I2C na integração com o display.
 
 ## video do Projeto
-- **[Ver Video](https://drive.google.com/file/d/1-UUp2QFG4MBCVXd2P7ZYwXoJd2ywZ1m8/view?usp=sharing)**
+- **[Ver Video](https://drive.google.com/file/d/182CmEhxDS29QFLWqnFVRjkNTUKU2cgfT/view?usp=sharing)**
 
 ## Componentes Principais
 
