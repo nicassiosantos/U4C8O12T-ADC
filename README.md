@@ -133,7 +133,7 @@ A função principal do programa configura o hardware, inicializa as interrupç�
 - Eixo X: Pino 27 (VRX)  
 - Botão: Pino 22 (button_joystick)
 
-#### LEDs:
+##### LEDs:
 - Azul: Pino 12 (LED_B)  
 - Vermelho: Pino 13 (LED_R)  
 - Verde: Pino 11 (LED_G)
