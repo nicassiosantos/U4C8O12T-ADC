@@ -115,10 +115,9 @@ Outra função é responsável por ler os valores do joystick, calcular os ciclo
 
 A função principal do programa configura o hardware, inicializa as interrupções e entra em um loop infinito onde os valores do joystick são lidos e processados.
 
+## Pré-requisitos
 
-### Pré-requisitos
-
-#### Hardware:
+### Hardware:
 - Raspberry Pi Pico.
 - Joystick analógico.
 - Display OLED SSD1306.
@@ -133,7 +132,7 @@ A função principal do programa configura o hardware, inicializa as interrupç�
 - Eixo X: Pino 27 (VRX)  
 - Botão: Pino 22 (button_joystick)
 
-##### LEDs:
+#### LEDs:
 - Azul: Pino 12 (LED_B)  
 - Vermelho: Pino 13 (LED_R)  
 - Verde: Pino 11 (LED_G)
@@ -146,7 +145,7 @@ A função principal do programa configura o hardware, inicializa as interrupç�
 - SDA: Pino 14 (I2C_SDA)  
 - SCL: Pino 15 (I2C_SCL)
 
-### Considerações Finais
+## Considerações Finais
 
 Este projeto é um exemplo prático de como integrar diferentes componentes eletrônicos com um microcontrolador. Ele pode ser expandido para incluir mais funcionalidades, como:
 - Leitura de mais sensores
