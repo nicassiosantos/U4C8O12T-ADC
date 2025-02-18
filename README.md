@@ -9,6 +9,9 @@ Este projeto utiliza o microcontrolador Raspberry Pi Pico para criar um sistema 
 - Representar a posição do joystick no display SSD1306 por meio de um quadrado móvel.
 - Aplicar o protocolo de comunicação I2C na integração com o display.
 
+## video do Projeto
+- **[Ver Video](https://drive.google.com/file/d/1-UUp2QFG4MBCVXd2P7ZYwXoJd2ywZ1m8/view?usp=sharing)**
+
 ## Componentes Principais
 
 ### Joystick Analógico
@@ -152,7 +155,8 @@ Este projeto é um exemplo prático de como integrar diferentes componentes elet
 - Controle de mais dispositivos
 - Implementação de uma interface gráfica mais complexa no display OLED
 
-
+## Desenvolvido com dedicação por:
+- **[Nicassio Santos.](https://github.com/nicassiosantos)**
 
 
 
